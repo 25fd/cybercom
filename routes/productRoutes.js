@@ -9,5 +9,10 @@ router
   .get(authController.protect, productController.getProduct)
   .post(authController.protect, productController.createProduct)
 
+  router
+  .route('/mysql/:id')
+  .post(authController.protect, productController.updateProduct)
+  // .delete(authController.protect, mySqlController.deleteCategory)
+
 
   module.exports = router;

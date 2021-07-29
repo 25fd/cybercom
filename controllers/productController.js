@@ -1,4 +1,5 @@
 const pool = require('../mysql');
+const path = require('path')
 
 exports.getProduct = async (req, res) => {
     try{
@@ -25,7 +26,6 @@ exports.createProduct = async(req, res) => {
         for (let i = 0; i < products.length; i++) {
             maxNumber += 1;
             const nextSKU = ('00000' + maxNumber).slice(-5)
-            const imagePath = await uploadImage(req);
            productSqlArray.push([products[i].ProductId, products[i].CategoryId, products[i].Name, products[i].Price,'PROD' + nextSKU]);
         }
         // console.log(sql);
@@ -40,12 +40,16 @@ exports.createProduct = async(req, res) => {
 
 exports.updateProduct = async(req, res) => {
     try {
-        const name = req.body.name;
+        const {name, price} = req.body;
+        const image = req.files.image
+        console.log( {name, price});
         const id =  parseInt(req.params.id);
-        const sql = `UPDATE category 
-                    SET Name = ? 
-                    Where CategoryId = ?`;  
-        const data  = await pool.query(sql, [name, id])
+        const imagePath = await uploadImage(image);
+
+        const sql = `UPDATE product 
+                    SET Name = ? , Price= ?, Image= ?
+                    Where ProductId = ?`;  
+        const data  = await pool.query(sql, [name, price, imagePath,id])
         return res.sendResponse(data)
     } catch(e) {
         console.log(e);
@@ -74,15 +78,9 @@ async function createProductTable() {
     }
 }
 
-async function uploadImage(req) {
+async function uploadImage(image) {
     try {
-        let image;
-        let uploadPath;
-        if (!req.files || Object.keys(req.files).length === 0) {
-            return res.status(400).send('No files were uploaded.');
-        }
-            image = req.files.image;
-            uploadPath = path.join(__dirname , '../public/' + image.name);
+        const uploadPath = path.join(__dirname , '../public/' + image.name);
             await image.mv(uploadPath);
             return uploadPath;
     } catch(e) {
