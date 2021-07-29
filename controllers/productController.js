@@ -57,6 +57,18 @@ exports.updateProduct = async(req, res) => {
     }
 }
 
+exports.deleteProduct = async(req, res) => {
+    try {
+        const id =  parseInt(req.params.id);
+        const sql = `DELETE FROM product 
+                    WHERE ProductId = ${id}`;  
+        const data  = await pool.query(sql)
+        return res.sendResponse(data)
+    } catch(e) {
+        console.log(e);
+        return res.sendError('error in updation of table');
+    }
+}
 async function createProductTable() {
     const sql = `CREATE TABLE IF NOT EXISTS product (
         ProductId INT NOT NULL PRIMARY KEY, 

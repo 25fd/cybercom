@@ -12,7 +12,7 @@ router
   router
   .route('/mysql/:id')
   .post(authController.protect, productController.updateProduct)
-  // .delete(authController.protect, mySqlController.deleteCategory)
+  .delete(authController.protect, productController.deleteProduct)
 
 
   module.exports = router;
