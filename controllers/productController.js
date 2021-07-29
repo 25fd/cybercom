@@ -4,7 +4,7 @@ const path = require('path')
 exports.getProduct = async (req, res) => {
     try{
         await createProductTable()
-        const sql = "SELECT *FROM product ";  
+        const sql = "SELECT *, category.Name as CategoryName  FROM product INNER JOIN category ON product.CategoryId = category.CategoryId ";  
         const data  = await pool.query(sql)
         res.sendResponse(data)
     }  catch(e) {
